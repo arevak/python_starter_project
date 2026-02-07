@@ -2,13 +2,55 @@
 
 A full-stack monorepo with a React (TypeScript) frontend and Python FastAPI backend.
 
-## Prerequisites
+## Prerequisites (manual setup only)
 
-- Python 3.12+
-- Node.js 20+
-- [uv](https://docs.astral.sh/uv/) (Python package manager)
+> **Skip this section** if you're using the Dev Container — everything is pre-installed inside the container.
 
-## Quick Start
+Install the following on your machine:
+
+- **Python 3.12+** — [python.org downloads](https://www.python.org/downloads/) or via a version manager like [pyenv](https://github.com/pyenv/pyenv)
+- **Node.js 20+** — [nodejs.org downloads](https://nodejs.org/) (the LTS version) or via [nvm](https://github.com/nvm-sh/nvm)
+- **uv** (fast Python package manager):
+  ```bash
+  # macOS / Linux
+  curl -LsSf https://astral.sh/uv/install.sh | sh
+
+  # Windows (PowerShell)
+  powershell -ExecutionPolicy ByPass -c "irm https://astral.sh/uv/install.ps1 | iex"
+  ```
+- **make** — pre-installed on macOS and most Linux distros. On Windows, install via `choco install make` or use Git Bash.
+
+## Quick Start (Dev Container — recommended for beginners)
+
+### 1. Install the required software
+
+| Tool | What it does | Install link |
+| ---- | ------------ | ------------ |
+| **VS Code** | Code editor | [Download VS Code](https://code.visualstudio.com/) |
+| **Docker Desktop** | Runs containers on your machine | [Download Docker Desktop](https://www.docker.com/products/docker-desktop/) |
+| **Dev Containers extension** | Lets VS Code work inside a container | [Install from Marketplace](https://marketplace.visualstudio.com/items?itemName=ms-vscode-remote.remote-containers) |
+
+> **Windows users:** Docker Desktop will prompt you to enable WSL 2 during installation — follow the prompts and restart when asked.
+
+### 2. Open the project in the container
+
+1. Clone this repo and open the folder in VS Code.
+2. When prompted **"Reopen in Container"**, click it (or run **Dev Containers: Reopen in Container** from the Command Palette with `Ctrl+Shift+P` / `Cmd+Shift+P`).
+3. Wait for the container to build — all dependencies (Python, Node.js, uv, npm packages) install automatically.
+
+### 3. Start developing
+
+Open the VS Code integrated terminal and run:
+
+```bash
+make dev
+```
+
+The frontend opens at `http://localhost:5173` and the backend API is at `http://localhost:8000`.
+
+That's it — no need to install Python, Node.js, or any tools on your machine.
+
+## Quick Start (manual)
 
 ```bash
 # Clone the repository

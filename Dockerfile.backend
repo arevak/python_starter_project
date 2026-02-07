@@ -1,12 +1,48 @@
+# =============================================================================
+# Backend Dockerfile — Python FastAPI Production Image
+# =============================================================================
+# This Dockerfile creates a container image for the FastAPI backend.
+# It follows Docker best practices:
+#   1. Use a slim base image to minimize size.
+#   2. Copy dependency files first, then install — this leverages Docker's
+#      layer caching so dependencies are only reinstalled when they change.
+#   3. Copy source code last (it changes most frequently).
+#
+# Build: docker build -f Dockerfile.backend -t backend .
+# Run:   docker run -p 8000:8000 backend
+# =============================================================================
+
+# Start from the official Python 3.12 slim image.
+# "slim" variants exclude development tools (compilers, man pages, etc.)
+# to keep the image small (~150MB vs ~900MB for the full image).
 FROM python:3.12-slim
 
+# Copy the `uv` package manager binary from its official Docker image.
+# This is a "multi-stage copy" — it grabs just the binary without including
+# the rest of the uv image. `uv` is a fast Python package manager that
+# replaces pip and manages virtual environments.
 COPY --from=ghcr.io/astral-sh/uv:latest /uv /uvx /usr/local/bin/
 
+# Set the working directory inside the container. All subsequent commands
+# (COPY, RUN, CMD) will run relative to /app.
 WORKDIR /app
 
+# Copy ONLY the dependency files first. Docker caches each instruction as
+# a "layer." If these files haven't changed, Docker reuses the cached layer
+# and skips the `uv sync` step — saving minutes on rebuilds.
 COPY backend/pyproject.toml backend/uv.lock ./
+
+# Install production dependencies (--no-dev excludes test/lint tools).
+# --frozen ensures the lock file is used exactly as-is (no resolution).
 RUN uv sync --frozen --no-dev
 
+# NOW copy the application source code. This layer changes frequently
+# (every code edit), but the dependency layer above is cached.
 COPY backend/ .
 
+# Define the default command to run when the container starts.
+# - uvicorn: the ASGI server that runs our FastAPI app.
+# - app.main:app: import path to the FastAPI instance.
+# - --host 0.0.0.0: listen on all network interfaces (required in Docker).
+# - --port 8000: the port to serve on.
 CMD ["uv", "run", "uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8000"]

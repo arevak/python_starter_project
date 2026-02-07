@@ -1,38 +1,82 @@
+# =============================================================================
+# Docker Compose Configuration
+# =============================================================================
+# Docker Compose lets you define and run multiple containers (services) with
+# a single command: `docker compose up`. This file describes two services:
+#
+#   1. backend  — the FastAPI Python API server
+#   2. frontend — the Vite React development server
+#
+# A third service (PostgreSQL database) is commented out and ready to enable
+# when you need persistent data storage.
+#
+# Key concepts:
+#   - "services" are the containers you want to run.
+#   - "build" tells Docker how to create the container image.
+#   - "ports" maps container ports to your machine (host:container).
+#   - "volumes" mounts local folders into the container so code changes
+#     are reflected immediately without rebuilding the image.
+#   - "depends_on" controls startup order between services.
+# =============================================================================
+
 services:
+
+  # ---------------------------------------------------------------------------
+  # Backend Service — Python FastAPI
+  # ---------------------------------------------------------------------------
   backend:
     build:
-      context: .
-      dockerfile: Dockerfile.backend
+      context: .                      # Build context is the project root
+      dockerfile: Dockerfile.backend  # Use the backend-specific Dockerfile
     ports:
-      - "8000:8000"
+      - "8000:8000"                   # Map host port 8000 → container port 8000
     volumes:
-      - ./backend:/app
+      - ./backend:/app                # Mount local backend/ code into the container
+                                      # so changes are reflected without rebuilding
     environment:
-      - DEBUG=true
+      - DEBUG=true                    # Enable debug mode inside the container
+    # Override the Dockerfile's CMD to enable hot-reload during development.
+    # --host 0.0.0.0 makes the server accessible from outside the container.
+    # --reload watches for file changes and auto-restarts the server.
     command: uv run uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload
 
+  # ---------------------------------------------------------------------------
+  # Frontend Service — React + Vite
+  # ---------------------------------------------------------------------------
   frontend:
     build:
-      context: .
-      dockerfile: Dockerfile.frontend
+      context: .                      # Build context is the project root
+      dockerfile: Dockerfile.frontend # Use the frontend-specific Dockerfile
     ports:
-      - "5173:5173"
+      - "5173:5173"                   # Map host port 5173 → container port 5173
     volumes:
-      - ./frontend:/app
-      - /app/node_modules
+      - ./frontend:/app               # Mount local frontend/ code into the container
+      - /app/node_modules             # IMPORTANT: This "anonymous volume" prevents
+                                      # the host's node_modules from overwriting the
+                                      # container's. The container has its own
+                                      # node_modules installed during image build.
     depends_on:
-      - backend
+      - backend                       # Start the backend before the frontend
 
+  # ---------------------------------------------------------------------------
+  # Database Service (PostgreSQL) — Uncomment when ready to use
+  # ---------------------------------------------------------------------------
+  # To enable the database:
+  #   1. Uncomment the `db` service and `volumes` section below.
+  #   2. Add DATABASE_URL to your .env file.
+  #   3. Run `docker compose up --build`.
+  #
   # db:
-  #   image: postgres:16
+  #   image: postgres:16              # Official PostgreSQL 16 image
   #   ports:
-  #     - "5432:5432"
+  #     - "5432:5432"                 # Map standard Postgres port
   #   environment:
-  #     POSTGRES_USER: postgres
-  #     POSTGRES_PASSWORD: postgres
-  #     POSTGRES_DB: app
+  #     POSTGRES_USER: postgres       # Database superuser name
+  #     POSTGRES_PASSWORD: postgres   # Database superuser password
+  #     POSTGRES_DB: app              # Name of the database to create
   #   volumes:
-  #     - pgdata:/var/lib/postgresql/data
+  #     - pgdata:/var/lib/postgresql/data  # Persist data across container restarts
 
+# Named volumes persist data even when containers are removed.
 # volumes:
 #   pgdata:

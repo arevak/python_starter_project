@@ -1,0 +1,41 @@
+.app {
+  max-width: 600px;
+  margin: 80px auto;
+  text-align: center;
+  font-family: system-ui, -apple-system, sans-serif;
+}
+
+h1 {
+  font-size: 2rem;
+  margin-bottom: 2rem;
+}
+
+.loading {
+  color: #888;
+}
+
+.error {
+  color: #e53e3e;
+}
+
+.health {
+  background: #f7f7f7;
+  border-radius: 8px;
+  padding: 1.5rem;
+  display: inline-block;
+}
+
+.health p {
+  margin: 0.5rem 0;
+  font-size: 1.1rem;
+}
+
+.status {
+  font-weight: 600;
+  color: #38a169;
+}
+
+.version {
+  font-weight: 600;
+  color: #3182ce;
+}

@@ -8,7 +8,23 @@ A full-stack monorepo with a React (TypeScript) frontend and Python FastAPI back
 - Node.js 20+
 - [uv](https://docs.astral.sh/uv/) (Python package manager)
 
-## Quick Start
+## Quick Start (Dev Container — recommended for beginners)
+
+If you have [VS Code](https://code.visualstudio.com/) and [Docker Desktop](https://www.docker.com/products/docker-desktop/) installed:
+
+1. Install the [Dev Containers](https://marketplace.visualstudio.com/items?itemName=ms-vscode-remote.remote-containers) extension in VS Code.
+2. Clone this repo and open it in VS Code.
+3. When prompted **"Reopen in Container"**, click it (or run the command **Dev Containers: Reopen in Container** from the Command Palette).
+4. Wait for the container to build — all dependencies install automatically.
+5. Open the terminal inside VS Code and run:
+   ```bash
+   make dev
+   ```
+6. The frontend opens at `http://localhost:5173` and the backend API is at `http://localhost:8000`.
+
+That's it — no need to install Python, Node.js, or any tools on your machine.
+
+## Quick Start (manual)
 
 ```bash
 # Clone the repository

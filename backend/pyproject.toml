@@ -1,14 +1,38 @@
+# =============================================================================
+# Python Project Configuration (pyproject.toml)
+# =============================================================================
+# This is the standard Python project metadata file (PEP 621).
+# It replaces the older setup.py / setup.cfg / requirements.txt approach.
+# The `uv` package manager reads this file to know what to install.
+#
+# Sections:
+#   [project]            — Project metadata and production dependencies.
+#   [dependency-groups]  — Groups of optional dependencies (e.g., dev tools).
+# =============================================================================
+
 [project]
-name = "backend"
-version = "0.1.0"
+name = "backend"                    # Package name (used internally by uv)
+version = "0.1.0"                   # Current version of the backend
 description = "FastAPI backend service"
-requires-python = ">=3.12"
+requires-python = ">=3.12"          # Minimum Python version required
+
+# Production dependencies — installed in both development and production.
+#   fastapi:           The web framework for building APIs.
+#   uvicorn[standard]: The ASGI server that runs FastAPI. The [standard] extra
+#                      includes performance-enhancing packages (uvloop, httptools).
+#   pydantic-settings: Loads configuration from environment variables and .env files.
 dependencies = [
     "fastapi",
     "uvicorn[standard]",
     "pydantic-settings",
 ]
 
+# Dev dependency group — only installed during development (not in production).
+# These are tools for testing, linting, and debugging.
+#   httpx:          Async HTTP client used in tests (instead of starting a real server).
+#   pytest:         Python's most popular testing framework.
+#   pytest-asyncio: Plugin that lets pytest run async test functions.
+#   ruff:           A fast Python linter and code formatter (written in Rust).
 [dependency-groups]
 dev = [
     "httpx",
